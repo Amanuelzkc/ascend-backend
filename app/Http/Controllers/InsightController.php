@@ -35,9 +35,13 @@ class InsightController extends Controller
         return response()->json($insight, 201);
     }
 
-    public function show($slug)
+    public function show($identifier)
     {
-        return Insight::where('slug', $slug)->firstOrFail();
+    $insight = is_numeric($identifier)
+        ? Insight::findOrFail($identifier)
+        : Insight::where('slug', $identifier)->firstOrFail();
+        
+    return $insight;
     }
 
     public function update(Request $request, Insight $insight)
