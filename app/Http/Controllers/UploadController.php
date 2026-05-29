@@ -62,23 +62,25 @@ class UploadController extends Controller
     $url = $request->query('url');
     $filename = $request->query('filename', 'resume.pdf');
 
+    \Log::info('Download resume request', ['url' => $url, 'filename' => $filename]);
+
     if (!$url) {
         return response()->json(['message' => 'No URL provided'], 400);
     }
 
-    // Handle relative storage paths
     if (str_starts_with($url, '/storage/')) {
         $relativePath = str_replace('/storage/', '', $url);
         $fullPath = storage_path('app/public/' . $relativePath);
         
+        \Log::info('Full path', ['path' => $fullPath, 'exists' => file_exists($fullPath)]);
+        
         if (!file_exists($fullPath)) {
-            return response()->json(['message' => 'File not found'], 404);
+            return response()->json(['message' => 'File not found at: ' . $fullPath], 404);
         }
         
         return response()->download($fullPath, $filename);
     }
 
-    // Handle full URLs
     $contents = file_get_contents($url);
     return response($contents, 200, [
         'Content-Type' => 'application/octet-stream',
