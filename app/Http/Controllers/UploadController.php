@@ -57,13 +57,28 @@ class UploadController extends Controller
         return response()->json(['message' => 'No file uploaded'], 400);
     }
 
-    public function downloadResume(Request $request)
+   public function downloadResume(Request $request)
 {
     $url = $request->query('url');
     $filename = $request->query('filename', 'resume.pdf');
+
     if (!$url) {
         return response()->json(['message' => 'No URL provided'], 400);
     }
+
+    // Handle relative storage paths
+    if (str_starts_with($url, '/storage/')) {
+        $relativePath = str_replace('/storage/', '', $url);
+        $fullPath = storage_path('app/public/' . $relativePath);
+        
+        if (!file_exists($fullPath)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+        
+        return response()->download($fullPath, $filename);
+    }
+
+    // Handle full URLs
     $contents = file_get_contents($url);
     return response($contents, 200, [
         'Content-Type' => 'application/octet-stream',
