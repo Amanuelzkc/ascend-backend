@@ -40,7 +40,6 @@ class InsightController extends Controller
     $insight = is_numeric($identifier)
         ? Insight::findOrFail($identifier)
         : Insight::where('slug', $identifier)->firstOrFail();
-        
     return $insight;
     }
 
