@@ -38,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/admin/download-resume', [UploadController::class, 'downloadResume']);
+
     Route::apiResource('jobs', JobPostingController::class)->except(['index', 'show']);
     Route::apiResource('applications', ApplicationController::class)->except(['store']);
     Route::apiResource('blog', BlogPostController::class)->except(['index', 'show']);
