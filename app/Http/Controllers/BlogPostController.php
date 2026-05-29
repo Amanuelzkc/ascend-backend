@@ -33,9 +33,12 @@ class BlogPostController extends Controller
         return response()->json($post, 201);
     }
 
-    public function show($slug)
+    public function show($identifier)
     {
-        return BlogPost::where('slug', $slug)->firstOrFail();
+    $post = is_numeric($identifier)
+        ? BlogPost::findOrFail($identifier)
+        : BlogPost::where('slug', $identifier)->firstOrFail();
+    return $post;
     }
 
     public function update(Request $request, BlogPost $blog)
